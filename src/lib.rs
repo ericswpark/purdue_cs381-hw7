@@ -1,8 +1,8 @@
 use anyhow::{anyhow, Result};
-use serde::Deserialize;
-use std::cmp::{max, min};
 use pathfinding::matrix::Matrix;
 use pathfinding::prelude::kuhn_munkres;
+use serde::Deserialize;
+use std::cmp::{max, min};
 
 pub fn vip_scheduler(s: &[u32], e: &[u32]) -> Result<u32> {
     if s.len() != e.len() {
@@ -80,7 +80,7 @@ pub fn homework_max_points(p: &[u32], t: &[u32], d: &[u32]) -> Result<u32> {
             hw_matrix[i][(day - 1) as usize] = p[i] as i32;
         }
     }
-    
+
     println!("{:?}", hw_matrix);
 
     let weights = Matrix::from_rows(hw_matrix)?;
@@ -89,7 +89,6 @@ pub fn homework_max_points(p: &[u32], t: &[u32], d: &[u32]) -> Result<u32> {
 
     Ok(points as u32)
 }
-
 
 // Only used for test harness, silence dead code warning
 #[allow(dead_code)]
@@ -111,7 +110,6 @@ struct Q4TestCase {
     d: Vec<u32>,
     result: u32,
 }
-
 
 #[cfg(test)]
 mod tests {

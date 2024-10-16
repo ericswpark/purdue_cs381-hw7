@@ -44,7 +44,7 @@ async fn load_test_cases(file_path: &str) -> impl IntoResponse {
     let file = PathBuf::from(file_path);
 
     match load_file(file).await {
-        Ok(content) => Json(serde_json::from_str::<Value>(&*content).unwrap()).into_response(),
+        Ok(content) => Json(serde_json::from_str::<Value>(&content).unwrap()).into_response(),
         Err(err) => (
             StatusCode::INTERNAL_SERVER_ERROR,
             format!("Error loading test cases: {}", err),

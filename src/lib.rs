@@ -70,7 +70,7 @@ pub fn homework_max_points(p: &[u32], t: &[u32], d: &[u32]) -> Result<u32> {
     let cap = 100;
 
     if n >= cap || max_days >= cap as u32 {
-        return Err(anyhow!("Too many homeworks or too high of a day value. For performance reasons please keep your input smaller. Sorry!"));
+        return Err(anyhow!("Too many homework assignments or too high of a day value. For performance reasons please keep your input smaller. Sorry!"));
     }
 
     let mut hw_matrix = vec![vec![0; max_days as usize]; n];

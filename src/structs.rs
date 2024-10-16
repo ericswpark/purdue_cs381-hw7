@@ -9,8 +9,15 @@ pub struct QuestionTwo {
     pub(crate) e: Vec<u32>,
 }
 
+#[derive(Deserialize)]
+pub struct QuestionFour {
+    pub(crate) p: Vec<u32>,
+    pub(crate) t: Vec<u32>,
+    pub(crate) d: Vec<u32>,
+}
+
 #[derive(Serialize)]
-pub struct QuestionTwoAnswer {
+pub struct QuestionAnswer {
     pub(crate) answer: u32,
 }
 

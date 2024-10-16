@@ -1,6 +1,8 @@
 use anyhow::{anyhow, Result};
 use serde::Deserialize;
 use std::cmp::{max, min};
+use pathfinding::matrix::Matrix;
+use pathfinding::prelude::kuhn_munkres;
 
 pub fn vip_scheduler(s: &[u32], e: &[u32]) -> Result<u32> {
     if s.len() != e.len() {
@@ -58,15 +60,53 @@ pub fn vip_scheduler(s: &[u32], e: &[u32]) -> Result<u32> {
     Ok(performance_count)
 }
 
+pub fn homework_max_points(p: &[u32], t: &[u32], d: &[u32]) -> Result<u32> {
+    if p.len() != t.len() || t.len() != d.len() {
+        return Err(anyhow!("Provided arrays do not match in length!"));
+    }
+
+    let n = p.len();
+    let max_days = *max(t.iter().max().unwrap(), d.iter().max().unwrap());
+
+    let mut hw_matrix = vec![vec![0; max_days as usize]; n];
+
+    for i in 0..n {
+        for day in t[i]..=d[i] {
+            hw_matrix[i][(day - 1) as usize] = p[i] as i32;
+        }
+    }
+    
+    println!("{:?}", hw_matrix);
+
+    let weights = Matrix::from_rows(hw_matrix)?;
+
+    let (points, _assignments) = kuhn_munkres(&weights);
+
+    Ok(points as u32)
+}
+
+
 // Only used for test harness, silence dead code warning
 #[allow(dead_code)]
 #[derive(Deserialize)]
-struct TestCase {
+struct Q2TestCase {
     name: String,
     s: Vec<u32>,
     e: Vec<u32>,
     result: u32,
 }
+
+// Only used for test harness, silence dead code warning
+#[allow(dead_code)]
+#[derive(Deserialize)]
+struct Q4TestCase {
+    name: String,
+    p: Vec<u32>,
+    t: Vec<u32>,
+    d: Vec<u32>,
+    result: u32,
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -75,11 +115,26 @@ mod tests {
     #[test]
     fn test_vip_scheduler_tcs() {
         let tcs_str = include_str!("../q2_test_cases.json");
-        let tcs: Vec<TestCase> = serde_json::from_str(&tcs_str).expect("Invalid TC JSON file!");
+        let tcs: Vec<Q2TestCase> = serde_json::from_str(&tcs_str).expect("Invalid TC JSON file!");
 
         for tc in tcs {
             assert_eq!(
                 vip_scheduler(tc.s.as_slice(), tc.e.as_slice()).unwrap(),
+                tc.result,
+                "Test case {} failed!",
+                tc.name
+            );
+        }
+    }
+
+    #[test]
+    fn test_homework_max_points_tcs() {
+        let tcs_str = include_str!("../q4_test_cases.json");
+        let tcs: Vec<Q4TestCase> = serde_json::from_str(&tcs_str).expect("Invalid TC JSON file!");
+
+        for tc in tcs {
+            assert_eq!(
+                homework_max_points(tc.p.as_slice(), tc.t.as_slice(), tc.d.as_slice()).unwrap(),
                 tc.result,
                 "Test case {} failed!",
                 tc.name

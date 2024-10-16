@@ -65,6 +65,12 @@ pub fn homework_max_points(p: &[u32], t: &[u32], d: &[u32]) -> Result<u32> {
         return Err(anyhow!("Provided arrays do not match in length!"));
     }
 
+    for (index, start_date) in t.iter().enumerate() {
+        if start_date > &d[index] {
+            return Err(anyhow!("Homework assignment {} has start date {}, which is past the due date {}. This is not allowed!", index + 1, start_date, &d[index]));
+        }
+    }
+
     let n = p.len();
     let max_days = *max(t.iter().max().unwrap(), d.iter().max().unwrap());
     let cap = 100;
@@ -80,11 +86,11 @@ pub fn homework_max_points(p: &[u32], t: &[u32], d: &[u32]) -> Result<u32> {
             hw_matrix[i][(day - 1) as usize] = p[i] as i32;
         }
     }
-    
+
     if n > max_days as usize {
         hw_matrix = transpose(hw_matrix);
     }
-    
+
     let weights = Matrix::from_rows(hw_matrix)?;
     let (points, _assignments) = kuhn_munkres(&weights);
 
@@ -154,5 +160,10 @@ mod tests {
                 tc.name
             );
         }
+    }
+    
+    #[test]
+    fn test_homework_max_points_invalid_start_day() {
+        assert!(homework_max_points(&[50, 80], &[1, 4], &[2, 2]).is_err())
     }
 }

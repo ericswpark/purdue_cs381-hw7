@@ -80,9 +80,7 @@ pub fn homework_max_points(p: &[u32], t: &[u32], d: &[u32]) -> Result<u32> {
             hw_matrix[i][(day - 1) as usize] = p[i] as i32;
         }
     }
-
-    println!("{:?}", hw_matrix);
-
+    
     let weights = Matrix::from_rows(hw_matrix)?;
 
     let (points, _assignments) = kuhn_munkres(&weights);

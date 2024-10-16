@@ -81,11 +81,24 @@ pub fn homework_max_points(p: &[u32], t: &[u32], d: &[u32]) -> Result<u32> {
         }
     }
     
+    if n > max_days as usize {
+        hw_matrix = transpose(hw_matrix);
+    }
+    
     let weights = Matrix::from_rows(hw_matrix)?;
-
     let (points, _assignments) = kuhn_munkres(&weights);
 
     Ok(points as u32)
+}
+
+fn transpose<T>(v: Vec<Vec<T>>) -> Vec<Vec<T>>
+where
+    T: Clone,
+{
+    assert!(!v.is_empty());
+    (0..v[0].len())
+        .map(|i| v.iter().map(|inner| inner[i].clone()).collect::<Vec<T>>())
+        .collect()
 }
 
 // Only used for test harness, silence dead code warning
